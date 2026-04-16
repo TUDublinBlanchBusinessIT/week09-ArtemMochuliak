@@ -11,6 +11,11 @@ class Member extends Model
         $this->setTable("Member");
     }
 
+    public function bookings()
+    {
+        return $this->hasMany(\App\Models\Booking::class, 'memberid');
+    }
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -20,4 +25,14 @@ class Member extends Model
     protected $hidden = [
         'userid', 'created_at', 'updated_at', 'deleted_at'
     ];
+
+    protected $appends = ['_links'];
+
+        public function getLinksAttribute()
+        {
+            return [
+                ['self' => app()->make('url')->to("api/members/{$this->attributes['id']}")],
+                ['bookings' => app()->make('url')->to("api/member/{$this->attributes['id']}/bookings")]
+            ];
+        }   
 }
